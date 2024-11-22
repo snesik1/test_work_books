@@ -1,12 +1,12 @@
 import json
 
-
 from dataclasses import dataclass
 
-with open("1.json") as data:
-    json_db = json.load(data)
+with open("db.json") as data:
+    json_db = json.load(data)["data"]
 
-@dataclass
+
+@dataclass(repr=False)
 class Book:
     id: int
     title: str
@@ -14,18 +14,31 @@ class Book:
     year: int
     status: str
 
-class Work(Book):
-    def delete(self):
-        print()
-    def add(self):
-        print()
-    def search(self):
-        print()
-    def modify(self):
-        print()
+    def __repr__(self):
+        return f"{self.id}"
+
+    @staticmethod
     def get_all(self):
         print()
 
-a = Work(**json_db['data'][0])
+class Actions(Book):
+    def delete(self):
+        print()
+
+    def add(self):
+        title,author,year = input('Введите описание книги\n'), input('Введите автора\n'), input('Ведите год издания\n')
+        self.title, self.author, self.year = title, author, int(year)
+        print()
+
+    def search(self):
+        print()
+
+    def modify(self):
+        print()
+
+
+
+
+a = Actions(**json_db[0])
+a.add()
 print()
-test_work_books
