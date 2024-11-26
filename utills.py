@@ -52,7 +52,7 @@ class Cache(Book):
     all_books = [Book(**book) for book in file_management("r")]
 
 
-def delete() -> None:
+def delete() -> None | Book:
     """
     Удалить книгу
     Запрашивает у пользователя идентификатор книги.
@@ -70,9 +70,10 @@ def delete() -> None:
     Cache.all_books.remove(delete_book)
     file_management("w", write_data=Cache.all_books)
     print("Книга удалена:\n", delete_book)
+    return delete_book
 
 
-def modify() -> None:
+def modify() -> None | Book:
     """
     Изменить статус книги.
     Запросите у пользователя идентификатор книги и статус, который нужно установить.
@@ -103,9 +104,10 @@ def modify() -> None:
             print("Статус не найден. Проверьте статус")
     file_management("w", write_data=Cache.all_books)
     print("Книга изменена:\n", modify_book)
+    return modify_book
 
 
-def add() -> None:
+def add() -> Book | None:
     """
     Добавить книгу
     Запросит у пользователя название, автора и год издания книги.
@@ -118,15 +120,17 @@ def add() -> None:
         input('Введите автора\n'),
         int(input('Ведите год издания\n'))
     )
-    if 0 < year > 2024:
-        return print("Введите корректный год")
+    if 0 > year or year > 2024:
+        print("Введите корректный год")
+        return None
     new_book = Book(id=len(Cache.all_books) + 1, title=title, author=author, year=year, status="в наличии")
     Cache.all_books = Cache.all_books + [new_book]
     file_management("w", write_data=Cache.all_books)
     print("Книга добавлена:\n", new_book)
+    return new_book
 
 
-def search() -> None:
+def search() -> list | None:
     """
     Поиск книги
     Запросит у пользователя колонку и значение поиска.
@@ -152,13 +156,15 @@ def search() -> None:
 
     match mod:
         case "1":
-            return [print(book) for book in Cache.all_books if book.title == search_data]
+            result = [book for book in Cache.all_books if book.title == search_data]
         case "2":
-            return [print(book) for book in Cache.all_books if book.author == search_data]
+            result = [book for book in Cache.all_books if book.author == search_data]
         case "3":
-            return [print(book) for book in Cache.all_books if book.year == search_data]
+            result = [book for book in Cache.all_books if book.title == search_data]
         case _:
-            print("Колонка не найдена. Проверьте колонку поиска")
+            return print("Колонка не найдена. Проверьте колонку поиска")
+    print(result)
+    return result
 
 
 def get_all() -> list[None] | None:
