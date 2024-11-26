@@ -1,18 +1,20 @@
 import json
+import os
 
 from dataclasses import dataclass
 
 
 def file_management(mod: str, write_data: None | list = None) -> None | list:
-    with open("db.json", f"{mod}", encoding="utf-8") as file:
+    if not os.path.exists("db.json"): open('db.json', 'w', encoding="utf-8").close()
+    with open("db.json", f"{mod}+", encoding="utf-8") as file:
         match mod:
             case "w":
                 write = json.dumps({"data": [data.__dict__ for data in write_data]})
                 file.write(write)
             case "r":
-                check_file = file
-                if len(check_file.readlines()):
-                    return json.load(file)["data"]
+                check_file = file.read()
+                if len(check_file):
+                    return json.loads(check_file)["data"]
                 return []
 
 
@@ -54,8 +56,8 @@ def modify():
     status = (
         input(
             'Введите статус\n'
-            'в наличии - [1]\n'
-            'выдана - [2]\n'
+            '[1] - в наличии\n'
+            '[2] - выдана\n'
         )
     )
     match status:
@@ -75,7 +77,8 @@ def add():
         input('Введите автора\n'),
         int(input('Ведите год издания\n'))
     )
-
+    if 0 < year > 2024:
+        return print("Введите корректный год")
     new_book = Book(id=len(Cache.all_books) + 1, title=title, author=author, year=year, status="в наличии")
     Cache.all_books = Cache.all_books + [new_book]
     file_management("w", write_data=Cache.all_books)
